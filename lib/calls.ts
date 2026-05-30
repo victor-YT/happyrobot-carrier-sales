@@ -1,7 +1,23 @@
 import { getSupabaseClient, isSupabaseConfigured } from "./supabase";
 import type { CallLog, CallOutcome, CallSentiment } from "./types";
 
-export type CallLogInput = Partial<CallLog>;
+export type CallLogInput = Omit<Partial<CallLog>, "mc_number"> & {
+  mc_number?: string | number;
+};
+
+function normalizeMcNumber(raw: string | number | undefined): string | null {
+  if (typeof raw === "number") {
+    if (!Number.isFinite(raw) || raw <= 0) return null;
+    return `MC${Math.floor(raw)}`;
+  }
+  if (typeof raw === "string") {
+    const trimmed = raw.trim();
+    if (!trimmed) return null;
+    if (/^\d+$/.test(trimmed)) return `MC${trimmed}`;
+    return trimmed;
+  }
+  return null;
+}
 
 const supportedOutcomes: CallOutcome[] = [
   "booked",
@@ -24,7 +40,7 @@ export type LogCallResult =
     };
 
 export function validateCallLogInput(body: CallLogInput | null) {
-  if (!body?.mc_number || typeof body.mc_number !== "string") {
+  if (!body || !normalizeMcNumber(body.mc_number)) {
     return "mc_number is required.";
   }
   if (!body.carrier_name || typeof body.carrier_name !== "string") {
@@ -81,7 +97,7 @@ export async function logCall(body: CallLogInput): Promise<LogCallResult> {
   const callLog: CallLog = {
     id: crypto.randomUUID(),
     created_at: new Date().toISOString(),
-    mc_number: body.mc_number as string,
+    mc_number: normalizeMcNumber(body.mc_number) as string,
     carrier_name: body.carrier_name as string,
     eligible: Boolean(body.eligible),
     load_id: body.load_id ?? null,
