@@ -73,6 +73,7 @@ export type MetricsSummary = {
   booking_rate: number;
   average_agreed_rate: number;
   average_savings_vs_initial_offer: number;
+  average_negotiation_rounds: number;
   outcome_breakdown: Record<string, number>;
   sentiment_breakdown: Record<string, number>;
   recent_calls: CallLog[];

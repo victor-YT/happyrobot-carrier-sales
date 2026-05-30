@@ -94,6 +94,9 @@ export function buildMetricsSummary(calls: CallLog[]): MetricsSummary {
         typeof call.agreed_rate === "number",
     )
     .map((call) => (call.initial_offer as number) - (call.agreed_rate as number));
+  const negotiatedRounds = calls
+    .map((call) => call.rounds)
+    .filter((rounds) => Number.isFinite(rounds) && rounds > 0);
 
   return {
     total_calls: calls.length,
@@ -106,6 +109,10 @@ export function buildMetricsSummary(calls: CallLog[]): MetricsSummary {
       : 0,
     average_savings_vs_initial_offer: savings.length
       ? savings.reduce((sum, value) => sum + value, 0) / savings.length
+      : 0,
+    average_negotiation_rounds: negotiatedRounds.length
+      ? negotiatedRounds.reduce((sum, rounds) => sum + rounds, 0) /
+        negotiatedRounds.length
       : 0,
     outcome_breakdown: breakdown(calls, "outcome"),
     sentiment_breakdown: breakdown(calls, "sentiment"),

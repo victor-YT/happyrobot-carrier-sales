@@ -12,6 +12,7 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "design_handoff_carrier_sales_dashboard/**",
   ]),
 ]);
 
