@@ -791,7 +791,7 @@ export function CarrierSalesDashboard({
 
         <section className="hr-card is-hoverable">
           <div className="hr-card-head">
-            <h2 className="hr-card-title">Recent Calls</h2>
+            <h2 className="hr-card-title">Latest Calls</h2>
           </div>
           <div className="hr-chips">
             {filters.map((item) => (

@@ -66,15 +66,14 @@ async function main() {
     );
   }
 
-  const demoIds = callLogs.map((callLog) => callLog.id);
   const { error: deleteCallLogsError } = await supabase
     .from("call_logs")
     .delete()
-    .in("id", demoIds);
+    .not("id", "is", null);
 
   if (deleteCallLogsError) {
     throw new Error(
-      `${deleteCallLogsError.message}. Confirm the call_logs table exists and SUPABASE_SERVICE_ROLE_KEY can delete demo rows.`,
+      `${deleteCallLogsError.message}. Confirm the call_logs table exists and SUPABASE_SERVICE_ROLE_KEY can delete rows.`,
     );
   }
 

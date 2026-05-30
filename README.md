@@ -165,7 +165,7 @@ Supported call outcomes are:
 
 Supported sentiments are `positive`, `neutral`, and `negative`.
 
-The dashboard derives KPI cards, outcome breakdown, carrier sentiment, and recent calls from the same `call_logs` source. KPI cards and charts are calculated from all loaded call logs; the recent calls table shows the latest eight.
+The dashboard derives KPI cards, outcome breakdown, carrier sentiment, and latest calls from the same `call_logs` source. KPI cards and charts are calculated from all loaded call logs; the latest calls table shows the most recent eight.
 
 ## Demo MC Numbers
 

@@ -31,7 +31,7 @@ Expected flow:
 
 ## 3:15-4:20 Dashboard
 
-"The custom dashboard is built by us rather than relying on HappyRobot analytics. It shows total calls, booking rate, average margin versus initial offer, average negotiation rounds, outcome mix, sentiment mix, and recent calls."
+"The custom dashboard is built by us rather than relying on HappyRobot analytics. It shows total calls, booking rate, average savings versus initial offer, average negotiation rounds, outcome mix, sentiment mix, and recent calls."
 
 Refresh the dashboard and point to the recent booked load and savings metric.
 
