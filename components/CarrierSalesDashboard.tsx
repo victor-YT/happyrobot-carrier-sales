@@ -553,6 +553,7 @@ function sentimentLabel(tone: Tone) {
     amber: "Neutral",
     red: "Negative",
     gray: "Unknown",
+    blue: "Unknown",
   }[tone];
 }
 
