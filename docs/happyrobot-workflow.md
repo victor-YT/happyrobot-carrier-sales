@@ -51,7 +51,7 @@ content-type: application/json
 }
 ```
 
-If `best_match` is null, offer the closest alternatives or classify outcome as `no_load_match`.
+If `best_match` is null, offer the closest alternatives or classify outcome as `no_matching_load`.
 
 Malformed request bodies or missing API keys return structured JSON errors. These should be treated as workflow configuration issues, not carrier-facing failures.
 
@@ -61,7 +61,7 @@ Pitch the best load with lane, pickup, delivery, commodity, equipment, weight, m
 
 ## 7. Handle Accept or Counter Offer
 
-If the carrier accepts the presented rate, classify outcome as `booked`, set `agreed_rate`, mock transfer to a broker, and log the call.
+If the carrier accepts the presented rate, classify outcome as `booked`, set `agreed_rate`, and log the call.
 
 If the carrier counters, extract the numeric offer and current round.
 
@@ -87,16 +87,15 @@ content-type: application/json
 
 Use the returned `decision`:
 
-- `accept`: confirm booking and mock transfer.
+- `accept`: confirm booking.
 - `counter`: present `counter_offer` and continue.
-- `escalate`: mock transfer to a human broker and classify as `follow_up`.
-- `reject`: politely decline and classify as `rate_rejected`.
+- `reject`: politely decline and classify as `price_not_agreed`.
 
 Stop automated negotiation after three rounds.
 
-## 10. Mock Transfer After Agreement
+## 10. Confirm Agreement
 
-After agreement, say: "Great, I have that noted. I am transferring you to a broker to finalize the rate confirmation." The demo does not need a real transfer target.
+After agreement, say: "Great, I have that noted. The agreed rate is ready for confirmation."
 
 ## 11. Extract Offer Data
 
@@ -104,7 +103,7 @@ Capture `initial_offer`, `agreed_rate`, `rounds`, and `load_id` as structured va
 
 ## 12. Classify Outcome and Sentiment
 
-Outcome examples: `booked`, `rejected_carrier`, `rate_rejected`, `no_load_match`, `follow_up`.
+Supported outcomes: `booked`, `rejected_carrier`, `no_matching_load`, `price_not_agreed`, `not_interested`.
 
 Sentiment examples: `positive`, `neutral`, `negative`.
 

@@ -6,5 +6,11 @@ export const dynamic = "force-dynamic";
 export default async function Home() {
   const { summary, source } = await getMetricsSummary();
 
-  return <CarrierSalesDashboard source={source} summary={summary} />;
+  return (
+    <CarrierSalesDashboard
+      fmcsaConfigured={Boolean(process.env.FMCSA_API_KEY)}
+      source={source}
+      summary={summary}
+    />
+  );
 }

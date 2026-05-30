@@ -23,6 +23,9 @@
   --hr-red-bd: rgba(229, 100, 90, 0.32);
   --hr-gray: #7c7c79;
   --hr-gray-bg: rgba(150, 150, 148, 0.12);
+  --hr-blue: #5DA9F6;
+  --hr-blue-bg: rgba(93, 169, 246, 0.12);
+  --hr-blue-bd: rgba(93, 169, 246, 0.3);
   --hr-sans: var(--font-hanken), system-ui, sans-serif;
   --hr-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
   --hr-r-card: 16px;
@@ -65,7 +68,9 @@ button {
 }
 
 .hr {
-  display: flex;
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+  align-items: start;
   width: 100%;
   min-height: 100vh;
   background: var(--hr-bg);
@@ -77,7 +82,6 @@ button {
   position: sticky;
   top: 0;
   display: flex;
-  flex: 0 0 232px;
   flex-direction: column;
   gap: 30px;
   width: 232px;
@@ -243,10 +247,12 @@ button {
 
 .hr-main {
   display: flex;
-  flex: 1 1 auto;
+  grid-column: 2;
+  justify-self: center;
   flex-direction: column;
   gap: 22px;
   min-width: 0;
+  width: 100%;
   max-width: 1500px;
   padding: 28px 32px 40px;
 }
@@ -340,20 +346,6 @@ button {
   letter-spacing: -0.01em;
 }
 
-.hr-link {
-  color: var(--hr-g);
-  font-size: 12.5px;
-  font-weight: 600;
-  background: none;
-  border: 0;
-  cursor: pointer;
-  transition: color 0.14s;
-}
-
-.hr-link:hover {
-  color: var(--hr-g-2);
-}
-
 .hr-kpi {
   display: flex;
   flex-direction: column;
@@ -438,14 +430,6 @@ button {
   color: var(--hr-t3);
   font-size: 12px;
   white-space: nowrap;
-}
-
-.hr-kpi-spark {
-  margin-left: auto;
-}
-
-.hr-spark {
-  display: block;
 }
 
 .hr-insights {
@@ -659,6 +643,12 @@ button {
   color: var(--hr-gray);
   background: var(--hr-gray-bg);
   border-color: var(--hr-line);
+}
+
+.hr-badge.blue {
+  color: var(--hr-blue);
+  background: var(--hr-blue-bg);
+  border-color: var(--hr-blue-bd);
 }
 
 .hr-badge.dot::before {

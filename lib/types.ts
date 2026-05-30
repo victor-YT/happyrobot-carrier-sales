@@ -44,11 +44,20 @@ export type NegotiationRequest = {
 };
 
 export type NegotiationResult = {
-  decision: "accept" | "counter" | "reject" | "escalate";
+  decision: "accept" | "counter" | "reject";
   counter_offer: number | null;
   final_round: boolean;
   message: string;
 };
+
+export type CallOutcome =
+  | "booked"
+  | "rejected_carrier"
+  | "no_matching_load"
+  | "price_not_agreed"
+  | "not_interested";
+
+export type CallSentiment = "positive" | "neutral" | "negative";
 
 export type CallLog = {
   id: string;
@@ -57,8 +66,8 @@ export type CallLog = {
   carrier_name: string;
   eligible: boolean;
   load_id: string | null;
-  outcome: string;
-  sentiment: string;
+  outcome: CallOutcome;
+  sentiment: CallSentiment;
   initial_offer: number | null;
   agreed_rate: number | null;
   rounds: number;
@@ -74,8 +83,9 @@ export type MetricsSummary = {
   average_agreed_rate: number;
   average_savings_vs_initial_offer: number;
   average_negotiation_rounds: number;
+  booked_with_savings: number;
+  negotiated_calls: number;
   outcome_breakdown: Record<string, number>;
   sentiment_breakdown: Record<string, number>;
   recent_calls: CallLog[];
-  follow_up_queue: CallLog[];
 };

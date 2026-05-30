@@ -7,7 +7,7 @@ Production-style take-home project for HappyRobot Forward Deployed Engineering. 
 - HappyRobot owns the voice workflow and calls this app as an authenticated tool API.
 - Next.js App Router serves both the dashboard and API route handlers.
 - Supabase Postgres stores loads and call logs when configured.
-- Deterministic local fallbacks keep the demo complete without external services.
+- Deterministic local demo data keeps the app reviewable without external services.
 - Docker and Vercel are supported for reproducible deployment.
 
 ## Local Setup
@@ -75,8 +75,16 @@ create table if not exists call_logs (
   carrier_name text not null,
   eligible boolean not null,
   load_id text,
-  outcome text not null,
-  sentiment text not null,
+  outcome text not null check (
+    outcome in (
+      'booked',
+      'rejected_carrier',
+      'no_matching_load',
+      'price_not_agreed',
+      'not_interested'
+    )
+  ),
+  sentiment text not null check (sentiment in ('positive', 'neutral', 'negative')),
   initial_offer numeric,
   agreed_rate numeric,
   rounds integer not null default 0,
@@ -92,7 +100,7 @@ After configuring Supabase:
 npm run seed
 ```
 
-Without Supabase, the app uses `data/seed-loads.json` and demo call metrics.
+Without Supabase, the app uses `data/seed-loads.json` and `data/seed-call-logs.json`.
 
 ## Docker
 
@@ -146,6 +154,18 @@ curl -X POST http://localhost:3000/api/negotiations/evaluate \
 ```
 
 Call logging persists to Supabase when configured. Without Supabase, the endpoint returns `202` with the normalized call log and a clear non-persistence message so demos do not fail.
+
+Supported call outcomes are:
+
+- `booked`
+- `rejected_carrier`
+- `no_matching_load`
+- `price_not_agreed`
+- `not_interested`
+
+Supported sentiments are `positive`, `neutral`, and `negative`.
+
+The dashboard derives KPI cards, outcome breakdown, carrier sentiment, and recent calls from the same `call_logs` source. KPI cards and charts are calculated from all loaded call logs; the recent calls table shows the latest eight.
 
 ## Demo MC Numbers
 

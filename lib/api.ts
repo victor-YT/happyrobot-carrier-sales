@@ -5,11 +5,9 @@ export type ApiErrorCode =
   | "invalid_api_key"
   | "invalid_request"
   | "load_not_found"
-  | "method_not_allowed"
   | "missing_api_key"
   | "persistence_failed"
-  | "server_error"
-  | "supabase_not_configured";
+  | "server_error";
 
 export function apiError(
   code: ApiErrorCode,

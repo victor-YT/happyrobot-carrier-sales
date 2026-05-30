@@ -91,7 +91,7 @@ export async function searchLoads(
     return originMatch && destinationMatch && equipmentMatch && dateMatch;
   });
 
-  const best = exactMatches[0]?.load ?? ranked[0]?.load ?? null;
+  const best = exactMatches[0]?.load ?? null;
   const alternatives = ranked
     .map(({ load }) => load)
     .filter((load) => load.load_id !== best?.load_id)

@@ -178,5 +178,35 @@
     "num_of_pieces": 18,
     "miles": 663,
     "dimensions": "53 ft reefer, palletized"
+  },
+  {
+    "load_id": "LD-1013",
+    "origin": "New York, NY",
+    "destination": "Washington, DC",
+    "pickup_datetime": "2026-06-07T09:00:00.000Z",
+    "delivery_datetime": "2026-06-08T15:00:00.000Z",
+    "equipment_type": "Dry Van",
+    "loadboard_rate": 1800,
+    "notes": "Easy East Coast lane. Appointment required at delivery.",
+    "weight": 28000,
+    "commodity_type": "Retail goods",
+    "num_of_pieces": 18,
+    "miles": 225,
+    "dimensions": "53 ft trailer, palletized"
+  },
+  {
+    "load_id": "LD-1014",
+    "origin": "Boston, MA",
+    "destination": "New York, NY",
+    "pickup_datetime": "2026-06-07T10:00:00.000Z",
+    "delivery_datetime": "2026-06-08T12:00:00.000Z",
+    "equipment_type": "Dry Van",
+    "loadboard_rate": 1450,
+    "notes": "No touch freight. Receiver has morning delivery window.",
+    "weight": 24000,
+    "commodity_type": "Packaged goods",
+    "num_of_pieces": 16,
+    "miles": 215,
+    "dimensions": "53 ft trailer, palletized"
   }
 ]

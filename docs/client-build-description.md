@@ -31,7 +31,7 @@ This build pairs a HappyRobot voice workflow with a custom Next.js business API 
 
 ## Metrics
 
-The dashboard reports total calls, eligible and rejected carriers, booked loads, booking rate, average agreed rate, average savings versus initial offer, outcome mix, sentiment mix, recent calls, and human follow-up queue.
+The dashboard reports total calls, booking rate, average savings versus initial offer, average negotiation rounds, outcome mix, sentiment mix, and recent calls. KPI cards and charts are calculated from `call_logs`; the recent calls table shows the latest records.
 
 ## Security
 
@@ -49,6 +49,5 @@ The FMCSA response normalization is intentionally conservative and depends on av
 
 - Add customer-specific margin floors by lane and shipper.
 - Add fraud and insurance validation beyond FMCSA authority.
-- Add broker override workflows for high-value loads.
 - Add webhook retries and idempotency keys for call logging.
 - Add role-based dashboard access for operations managers.

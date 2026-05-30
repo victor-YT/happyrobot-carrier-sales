@@ -76,7 +76,7 @@ The four KPIs (exact copy & data):
 |---|---|---|---|---|
 | Inbound Calls | `4,982` | `+12.4%` (up/green) | vs prior 7 days | rising |
 | Booking Rate | `39.7%` | `+3.2 pp` (up/green) | 732 of 1,842 eligible | rising |
-| Avg Margin / Load | `$312` | `+9.0%` (up/green) | vs $284 prior | rising |
+| Avg Savings | `$312` | `+9.0%` (up/green) | vs $284 prior | rising |
 | Avg Negotiation | `2.3 rounds` | `−0.4` (down, **green** via good-down) | to reach agreement | falling |
 
 **4. Card shell (`.hr-card`)** — used by Outcome / Sentiment / Recent Calls. bg `#181818`, border `rgba(255,255,255,.07)`, radius `16px`, padding `22px`. Header: title (15px, weight 700) on left, a green text-link "Report →" / "View all calls →" on right (12.5px, weight 600, green, hover → lighter green `#6fe0a3`).

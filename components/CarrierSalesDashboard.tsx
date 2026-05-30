@@ -21,7 +21,7 @@ type IconName =
   | "arrow"
   | "chev";
 
-type Tone = "green" | "g2" | "amber" | "red" | "gray";
+type Tone = "green" | "g2" | "amber" | "red" | "gray" | "blue";
 type MetricDirection = "up" | "down" | "neutral";
 type OutcomeDatum = {
   key: string;
@@ -48,6 +48,7 @@ type DashboardCall = {
   sent: Tone;
 };
 type DashboardProps = {
+  fmcsaConfigured: boolean;
   source: string;
   summary: MetricsSummary;
 };
@@ -56,7 +57,6 @@ const loads = seedLoads as Load[];
 const outcomeColors: Record<string, string> = {
   booked: "#67E08A",
   rejected_carrier: "#E46D5E",
-  follow_up: "#F2B84B",
   price_not_agreed: "#F28C38",
   no_matching_load: "#5DA9F6",
   not_interested: "#8B95A7",
@@ -174,21 +174,10 @@ function laneParts(call: CallLog) {
 function outcomeTone(outcome: string): Tone {
   if (outcome === "booked") return "green";
   if (["rate_agreed", "agreed"].includes(outcome)) return "g2";
-  if (
-    [
-      "no_matching_load",
-      "not_a_match",
-      "price_not_agreed",
-      "follow_up",
-      "escalated",
-      "not_interested",
-    ].includes(outcome)
-  ) {
-    return "amber";
-  }
-  if (["rejected_carrier", "disqualified", "rate_rejected"].includes(outcome)) {
-    return "red";
-  }
+  if (outcome === "no_matching_load") return "blue";
+  if (outcome === "not_interested") return "gray";
+  if (outcome === "price_not_agreed") return "amber";
+  if (outcome === "rejected_carrier") return "red";
   return "gray";
 }
 
@@ -278,25 +267,6 @@ function buildSentimentData(summary: MetricsSummary) {
     .filter((item) => item.value > 0 || item.key !== "unknown");
 }
 
-function sparkFromCalls(
-  calls: CallLog[],
-  valueForCall: (call: CallLog) => number | null,
-) {
-  const sorted = [...calls]
-    .sort(
-      (a, b) =>
-        new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
-    )
-    .slice(-7);
-  const points = sorted
-    .map(valueForCall)
-    .filter((value): value is number => typeof value === "number");
-
-  if (points.length >= 2) return points;
-  if (points.length === 1) return [points[0], points[0]];
-  return [0, 0];
-}
-
 function Icon({ name, size = 18, style }: { name: IconName; size?: number; style?: CSSProperties }) {
   return (
     <svg
@@ -372,62 +342,28 @@ function Sidebar() {
   );
 }
 
-function StatusPills({ source }: { source: string }) {
+function StatusPills({
+  fmcsaConfigured,
+  source,
+}: {
+  fmcsaConfigured: boolean;
+  source: string;
+}) {
   return (
     <div className="hr-head-meta">
       <span className="hr-pill">
         <span className="hr-dot" />
-        Operational
+        API Secured
       </span>
       <span className="hr-pill">
         <Icon name="shield" size={14} style={{ color: "var(--hr-g)" }} />
-        FMCSA <span className="hr-mono">Live</span>
+        FMCSA <span className="hr-mono">{fmcsaConfigured ? "Live" : "Demo"}</span>
       </span>
       <span className="hr-pill">
         <Icon name="clock" size={14} />
         Source <span className="hr-mono">{source === "supabase" ? "Live" : "Demo"}</span>
       </span>
     </div>
-  );
-}
-
-function smoothPath(points: Array<[number, number]>) {
-  if (points.length < 2) return "";
-  let d = `M ${points[0][0]} ${points[0][1]}`;
-  for (let i = 0; i < points.length - 1; i += 1) {
-    const p0 = points[i - 1] || points[i];
-    const p1 = points[i];
-    const p2 = points[i + 1];
-    const p3 = points[i + 2] || p2;
-    const c1x = p1[0] + (p2[0] - p0[0]) / 6;
-    const c1y = p1[1] + (p2[1] - p0[1]) / 6;
-    const c2x = p2[0] - (p3[0] - p1[0]) / 6;
-    const c2y = p2[1] - (p3[1] - p1[1]) / 6;
-    d += ` C ${c1x} ${c1y}, ${c2x} ${c2y}, ${p2[0]} ${p2[1]}`;
-  }
-  return d;
-}
-
-function Sparkline({ points, color = "var(--hr-g)" }: { points: number[]; color?: string }) {
-  const width = 96;
-  const height = 30;
-  const max = Math.max(...points);
-  const min = Math.min(...points);
-  const range = max - min || 1;
-  const coords = points.map(
-    (point, index) =>
-      [
-        (width * index) / (points.length - 1),
-        height - 3 - ((height - 6) * (point - min)) / range,
-      ] as [number, number],
-  );
-  const line = smoothPath(coords);
-
-  return (
-    <svg width={width} height={height} className="hr-spark" aria-hidden="true">
-      <path d={`${line} L ${width} ${height} L 0 ${height} Z`} fill="rgba(51,209,126,.12)" />
-      <path d={line} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
   );
 }
 
@@ -444,7 +380,6 @@ function KpiCard({
     goodDown?: boolean;
     sub: string;
     icon: IconName;
-    spark: number[];
   };
 }) {
   const deltaClass = k.goodDown && k.dir === "down" ? "good-down" : k.dir;
@@ -475,9 +410,6 @@ function KpiCard({
           {k.delta}
         </span>
         <span className="hr-kpi-sub">{k.sub}</span>
-        <span className="hr-kpi-spark">
-          <Sparkline points={k.spark} color={k.dir === "down" && !k.goodDown ? "var(--hr-red)" : "var(--hr-g)"} />
-        </span>
       </div>
     </section>
   );
@@ -610,6 +542,7 @@ function toneColor(tone: Tone) {
     amber: "var(--hr-amber)",
     red: "var(--hr-red)",
     gray: "var(--hr-gray)",
+    blue: "var(--hr-blue)",
   }[tone];
 }
 
@@ -683,7 +616,11 @@ function matchesFilter(call: DashboardCall, filter: string) {
   return filter === "all" || call.outcome === filter;
 }
 
-export function CarrierSalesDashboard({ source, summary }: DashboardProps) {
+export function CarrierSalesDashboard({
+  fmcsaConfigured,
+  source,
+  summary,
+}: DashboardProps) {
   const [filter, setFilter] = useState("all");
   const [displayFilter, setDisplayFilter] = useState("all");
   const [isSwitchingRows, setIsSwitchingRows] = useState(false);
@@ -716,12 +653,6 @@ export function CarrierSalesDashboard({ source, summary }: DashboardProps) {
     (sum, value) => sum + value,
     0,
   );
-  const savingsSamples = summary.recent_calls.filter(
-    (call) =>
-      typeof call.initial_offer === "number" &&
-      typeof call.agreed_rate === "number",
-  ).length;
-  const roundSamples = summary.recent_calls.filter((call) => call.rounds > 0).length;
   const kpis = [
     {
       key: "calls",
@@ -731,7 +662,6 @@ export function CarrierSalesDashboard({ source, summary }: DashboardProps) {
       dir: "neutral" as const,
       sub: source === "supabase" ? "from live call logs" : "from demo fallback",
       icon: "phone" as const,
-      spark: sparkFromCalls(summary.recent_calls, () => 1),
     },
     {
       key: "booking",
@@ -742,37 +672,25 @@ export function CarrierSalesDashboard({ source, summary }: DashboardProps) {
       dir: "neutral" as const,
       sub: `${formatNumber(summary.booked_loads)} of ${formatNumber(summary.total_calls)} calls`,
       icon: "target" as const,
-      spark: sparkFromCalls(summary.recent_calls, (call) =>
-        call.outcome === "booked" ? 1 : 0,
-      ),
     },
     {
       key: "margin",
-      label: "Avg Margin / Load",
+      label: "Avg Savings",
       value: formatMoney(summary.average_savings_vs_initial_offer),
-      delta: `${formatNumber(savingsSamples)} loads`,
+      delta: `${formatNumber(summary.booked_with_savings)} loads`,
       dir: "neutral" as const,
       sub: "vs initial carrier offer",
       icon: "dollar" as const,
-      spark: sparkFromCalls(summary.recent_calls, (call) =>
-        typeof call.initial_offer === "number" &&
-        typeof call.agreed_rate === "number"
-          ? call.initial_offer - call.agreed_rate
-          : null,
-      ),
     },
     {
       key: "rounds",
       label: "Avg Negotiation",
       value: formatOneDecimal(summary.average_negotiation_rounds),
       unit: "rounds",
-      delta: `${formatNumber(roundSamples)} calls`,
+      delta: `${formatNumber(summary.negotiated_calls)} calls`,
       dir: "neutral" as const,
       sub: "across negotiated calls",
       icon: "loop" as const,
-      spark: sparkFromCalls(summary.recent_calls, (call) =>
-        call.rounds > 0 ? call.rounds : null,
-      ),
     },
   ];
 
@@ -807,7 +725,7 @@ export function CarrierSalesDashboard({ source, summary }: DashboardProps) {
             <h1 className="hr-title">Inbound Carrier Sales</h1>
             <p className="hr-subtitle">Carrier verification, load matching & automated rate negotiation.</p>
           </div>
-          <StatusPills source={source} />
+          <StatusPills fmcsaConfigured={fmcsaConfigured} source={source} />
         </header>
 
         <section className="hr-grid hr-kpi-grid" aria-label="Key metrics">
@@ -820,9 +738,6 @@ export function CarrierSalesDashboard({ source, summary }: DashboardProps) {
           <div className="hr-card is-hoverable hr-outcome-card">
             <div className="hr-card-head">
               <h2 className="hr-card-title">Outcome Breakdown</h2>
-              <button className="hr-link" type="button">
-                Report →
-              </button>
             </div>
             <div className="hr-outcome-body">
               <div className="hr-donut-wrap">
@@ -863,9 +778,6 @@ export function CarrierSalesDashboard({ source, summary }: DashboardProps) {
           <div className="hr-card is-hoverable hr-sentiment-card">
             <div className="hr-card-head">
               <h2 className="hr-card-title">Carrier Sentiment</h2>
-              <button className="hr-link" type="button">
-                Report →
-              </button>
             </div>
             <SentimentBody rows={sentimentData} />
             <p className="hr-sentiment-note">
@@ -879,9 +791,6 @@ export function CarrierSalesDashboard({ source, summary }: DashboardProps) {
         <section className="hr-card is-hoverable">
           <div className="hr-card-head">
             <h2 className="hr-card-title">Recent Calls</h2>
-            <button className="hr-link" type="button">
-              View all calls →
-            </button>
           </div>
           <div className="hr-chips">
             {filters.map((item) => (

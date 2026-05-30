@@ -81,10 +81,11 @@ export async function verifyCarrier(
   }
 
   return {
-    eligible: true,
-    carrier_name: `Verified Carrier ${normalizedMc}`,
+    eligible: false,
+    carrier_name: "Unknown carrier",
     mc_number: normalizedMc,
-    authority_status: "Active",
-    safety_rating: "Satisfactory",
+    authority_status: "Unknown",
+    safety_rating: "Unknown",
+    reason: "FMCSA verification unavailable for this MC number.",
   };
 }

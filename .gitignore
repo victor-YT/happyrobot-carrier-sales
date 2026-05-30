@@ -34,6 +34,8 @@ yarn-error.log*
 .env.local
 .idea
 
+design_handoff_carrier_sales_dashboard
+
 # vercel
 .vercel
 

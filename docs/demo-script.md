@@ -4,13 +4,13 @@
 
 "This project automates inbound carrier sales for a freight broker. Carriers call asking for available loads. HappyRobot handles the voice conversation, while this Next.js app provides the external business API and custom operations dashboard."
 
-Show the dashboard title, KPIs, recent calls, and follow-up queue.
+Show the dashboard title, KPIs, outcome breakdown, sentiment breakdown, and recent calls.
 
 ## 0:45-1:45 Architecture
 
 "The system has five main API capabilities: carrier verification, load search, negotiation evaluation, call logging, and metrics. Supabase stores loads and call logs when configured. For demo reliability, the app also includes deterministic MC numbers and seed loads."
 
-Show the endpoint status section and mention `x-api-key` authentication.
+Mention that all business API endpoints use `x-api-key` authentication.
 
 ## 1:45-3:15 Short Web Call Demo
 
@@ -27,11 +27,11 @@ Expected flow:
 5. Carrier offers `$3,350`.
 6. Negotiation API counters because the offer is above the base rate but within range.
 7. Carrier accepts around `$3,180`.
-8. HappyRobot mock transfers to a broker and logs the call.
+8. HappyRobot logs the booked call.
 
 ## 3:15-4:20 Dashboard
 
-"The custom dashboard is built by us rather than relying on HappyRobot analytics. It shows total calls, booking rate, average agreed rate, average savings, outcome mix, sentiment mix, recent calls, and calls requiring human follow-up."
+"The custom dashboard is built by us rather than relying on HappyRobot analytics. It shows total calls, booking rate, average margin versus initial offer, average negotiation rounds, outcome mix, sentiment mix, and recent calls."
 
 Refresh the dashboard and point to the recent booked load and savings metric.
 
