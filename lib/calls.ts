@@ -1,8 +1,10 @@
 import { getSupabaseClient, isSupabaseConfigured } from "./supabase";
 import type { CallLog, CallOutcome, CallSentiment } from "./types";
 
-export type CallLogInput = Omit<Partial<CallLog>, "mc_number"> & {
+export type CallLogInput = Omit<Partial<CallLog>, "mc_number" | "initial_offer" | "agreed_rate"> & {
   mc_number?: string | number;
+  initial_offer?: number | string | null;
+  agreed_rate?: number | string | null;
 };
 
 function normalizeMcNumber(raw: string | number | undefined): string | null {
@@ -75,6 +77,7 @@ export function validateCallLogInput(body: CallLogInput | null) {
   }
   if (
     body.initial_offer !== undefined &&
+    body.initial_offer !== "" &&
     body.initial_offer !== null &&
     (typeof body.initial_offer !== "number" || !Number.isFinite(body.initial_offer))
   ) {
@@ -82,6 +85,7 @@ export function validateCallLogInput(body: CallLogInput | null) {
   }
   if (
     body.agreed_rate !== undefined &&
+    body.agreed_rate !== "" &&
     body.agreed_rate !== null &&
     (typeof body.agreed_rate !== "number" || !Number.isFinite(body.agreed_rate))
   ) {
@@ -100,11 +104,11 @@ export async function logCall(body: CallLogInput): Promise<LogCallResult> {
     mc_number: normalizeMcNumber(body.mc_number) as string,
     carrier_name: body.carrier_name as string,
     eligible: Boolean(body.eligible),
-    load_id: body.load_id ?? null,
+    load_id: (body.load_id === "" ? null : body.load_id) ?? null,
     outcome: body.outcome as CallOutcome,
     sentiment: body.sentiment as CallSentiment,
-    initial_offer: body.initial_offer ?? null,
-    agreed_rate: body.agreed_rate ?? null,
+    initial_offer: (body.initial_offer === "" ? null : (body.initial_offer as number | null | undefined)) ?? null,
+    agreed_rate: (body.agreed_rate === "" ? null : (body.agreed_rate as number | null | undefined)) ?? null,
     rounds: body.rounds ?? 0,
     summary: body.summary ?? "",
   };
